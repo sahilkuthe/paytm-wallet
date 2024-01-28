@@ -13,7 +13,7 @@ function authMiddleware(req, res, next) {
     //now verify if the token is valid
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET);      
 
         if (decoded.userId) {
             req.userId === decoded.userId;
@@ -29,5 +29,5 @@ function authMiddleware(req, res, next) {
 
 module.exports = {
     authMiddleware,
-    
+
 };

@@ -3,6 +3,7 @@ const {User} = require("../db");
 const zod = require("zod");
 const jwt = require("jsonwebtoken")
 const {JWT_SECRET} = require("../config")
+const {authMiddleware} = require("../middleware")
 const router = express.Router();
 
 const signupBody = zod.object({             //defining a schema for input validation using zod
@@ -84,6 +85,55 @@ router.post("/signin", async (req, res) => {
     }
     return res.status(411).json({               
         message: "Error while logging in"
+    })
+
+
+})
+
+const updateBody = zod.object({
+    password: zod.string(),
+    firstName: zod.string(),
+    lastName: zod.string()
+})
+
+router.put("/update", authMiddleware, async (req, res) => {
+    const {success} = updateBody.safeParse();
+    if(!success){
+        res.status(411).json({
+            message: "Error while updating the information"
+        })
+    }
+    await User.updatrOne({
+        _id: req.userId
+    })
+    
+    res.json({
+        message: "Updated successfully"
+    })
+})
+
+router.get("/bulk", async (req, res) => {
+    const filter = req.query.filter || "";      //if a filter is passed in query then use that filter, else filter = ""
+    const users = User.find({        //to filter out using firstname or lastname, $or is a logical OR operator
+        $or: [{
+            firstName:{
+                "$regex": filter        //$regex means regular expression
+            }
+        },{
+            lastName: {
+                "$regex": filter
+            }
+        }]
+
+    })
+
+    res.json({
+        user: users.map(user => ({
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            _id: user._id
+        }))
     })
 
 
