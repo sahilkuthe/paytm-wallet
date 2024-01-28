@@ -52,11 +52,13 @@ router.post("/signup", async (req, res) => {
 
 })
 
+//zod schema for signin
 const signinBody = zod.object({
     username: zod.string().email(),
     password: zod.string()
 })
 
+//post request for signin
 router.post("/signin", async (req, res) => {
     const {success} = signinBody.safeParse();
     if(!success){
@@ -65,13 +67,13 @@ router.post("/signin", async (req, res) => {
         })
     }
 
-    const user = await User.findONe({
+    const user = await User.findONe({       //find user in DB
         username: req.body.username,
         password: req.body.password
     })
 
     if(user){
-        const token = jwt.sign({
+        const token = jwt.sign({        //user found then create a jwt token using user._id and jwt secret key
             userId: user._id
         }, JWT_SECRET);
 
@@ -80,7 +82,7 @@ router.post("/signin", async (req, res) => {
         })
         return;
     }
-    return res.status(411).json({
+    return res.status(411).json({               
         message: "Error while logging in"
     })
 
