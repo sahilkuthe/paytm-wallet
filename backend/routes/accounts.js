@@ -18,13 +18,18 @@ router.get("/", async (req, res) => {
 
 //endpoint for user to transfer money to another account
 router.post("/transfer", authMiddleware, async (req, res) => {
+    const session = await mongoose.startSession();
+    //using session we can improve the code so that even if one transaction fails the whole transaction is aborted or something like that...
+
+    session.startTransaction();
     const {amount, to} = req.body;      //get the amount and userid of the account to send money
 
     const account = await Account.findONe({       //this will get us users account
         userId: req.userId
-    })
+    }).session(session);
 
-    if(account.balance < amount){
+    if(!account || account.balance < amount){
+        await session.abortTransaction();
         res.status(400).json({
             message: "Insufficient funds"
         })
@@ -32,9 +37,11 @@ router.post("/transfer", authMiddleware, async (req, res) => {
     
     const toAccount = await Account.findONe({       //to check the validity of account
         userId: to
-    })
+    }).session(session);
+
 
     if(!toAccount){
+        await session.abortTransaction();
         res.status(400).json({
             message: "Invalid account"
         })
@@ -46,8 +53,7 @@ router.post("/transfer", authMiddleware, async (req, res) => {
         $inc: {
             balance: -amount
         }
-        
-    })
+    }).session(session);
 
     
     await Account.updateOne({
@@ -56,9 +62,10 @@ router.post("/transfer", authMiddleware, async (req, res) => {
         $inc: {
             balance: amount
         }
-        
-    })
+    }).session(session);
 
+    //now commit the transaction
+    await session.commitTransaction();
     res.json({
         message: "Transfer successfull!"
     })
