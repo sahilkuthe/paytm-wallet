@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 //to get account balance of the user
-router.get("/", async (req, res) => {
+router.get("/balance", async (req, res) => {
     const account = await Account.findONe({
         userId: req.userId
     })
