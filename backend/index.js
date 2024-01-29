@@ -3,7 +3,7 @@ const cors = require("cors");
 
 
 const app = express();
-const mainRouter = "./routes/index.js"
+const mainRouter = require("./routes/index.js")
 
 
 

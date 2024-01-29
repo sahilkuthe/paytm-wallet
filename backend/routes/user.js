@@ -3,7 +3,9 @@ const {User} = require("../db");
 const zod = require("zod");
 const jwt = require("jsonwebtoken")
 const {JWT_SECRET} = require("../config")
+const {Account} = require("../db")
 const {authMiddleware} = require("../middleware")
+
 const router = express.Router();
 
 const signupBody = zod.object({             //defining a schema for input validation using zod
@@ -22,7 +24,7 @@ router.post("/signup", async (req, res) => {
         })
     }
 
-    const existingUser = await User.findONe({
+    const existingUser = await User.findOne({
         username: req.body.username
     })
 
@@ -69,14 +71,14 @@ const signinBody = zod.object({
 
 //post request for signin
 router.post("/signin", async (req, res) => {
-    const {success} = signinBody.safeParse();
+    const {success} = signinBody.safeParse(req.body);
     if(!success){
         return res.status(411).json({
             message: "invalid inputs"
         })
     }
 
-    const user = await User.findONe({       //find user in DB
+    const user = await User.findOne({       //find user in DB
         username: req.body.username,
         password: req.body.password
     })

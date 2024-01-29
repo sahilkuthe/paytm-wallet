@@ -1,5 +1,5 @@
-import mongoose, { Mongoose, model } from "mongoose";
-require('dotenv').config();
+const mongoose = require('mongoose');
+const env = require('dotenv').config();
 mongoose.connect(process.env.MONGO_URL);
 
 //create a monggose schema

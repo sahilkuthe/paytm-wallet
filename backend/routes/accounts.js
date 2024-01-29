@@ -6,14 +6,14 @@ const router = express.Router();
 
 
 //to get account balance of the user
-router.get("/balance", async (req, res) => {
-    const account = await Account.findONe({
+router.get("/balance", authMiddleware, async (req, res) => {
+    const account = await Account.findOne({
         userId: req.userId
     })
-
     res.json({
         balance: account.balance
     })
+    
 });
 
 //endpoint for user to transfer money to another account
@@ -24,7 +24,7 @@ router.post("/transfer", authMiddleware, async (req, res) => {
     session.startTransaction();
     const {amount, to} = req.body;      //get the amount and userid of the account to send money
 
-    const account = await Account.findONe({       //this will get us users account
+    const account = await Account.findOne({       //this will get us users account
         userId: req.userId
     }).session(session);
 
