@@ -41,6 +41,12 @@ router.post("/signup", async (req, res) => {
 
     const userId = user._id;        //get the user Id
 
+    //create a new account
+    await Account.create({
+        userId,
+        balance: 1+ Math.random()*10000
+    })
+
     const token = jwt.sign({        //create a jwt token
         userId
     }, JWT_SECRET);
@@ -51,7 +57,9 @@ router.post("/signup", async (req, res) => {
         token: token
     })
 
-})
+    
+
+});
 
 //zod schema for signin
 const signinBody = zod.object({
