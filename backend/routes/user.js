@@ -41,7 +41,7 @@ router.post("/signup", async (req, res) => {
 
     const userId = user._id;        //get the user Id
 
-    //create a new account
+    //create a new account with a random balance from 1 to 10000
     await Account.create({
         userId,
         balance: 1+ Math.random()*10000
@@ -143,8 +143,9 @@ router.get("/bulk", async (req, res) => {
             _id: user._id
         }))
     })
-
-
 })
+
+
+
 
 module.exports = router
