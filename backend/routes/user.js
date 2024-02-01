@@ -1,9 +1,8 @@
 const express = require("express");
-const {User} = require("../db");
+const {User, Account} = require("../db");
 const zod = require("zod");
 const jwt = require("jsonwebtoken")
 const {JWT_SECRET} = require("../config")
-const {Account} = require("../db")
 const {authMiddleware} = require("../middleware")
 
 const router = express.Router();
@@ -49,15 +48,13 @@ router.post("/signup", async (req, res) => {
         balance: 1+ Math.random()*10000
     })
 
-    const token = jwt.sign({        //create a jwt token
-        userId
-    }, JWT_SECRET);
+    const token = jwt.sign({userId}, JWT_SECRET);
 
     //return json
-    res.json({
+    res.status(200).json({
         message: "user created successfully",
         token: token
-    })
+    });
 
     
 
@@ -89,10 +86,12 @@ router.post("/signin", async (req, res) => {
         }, JWT_SECRET);
 
         res.json({
+            msg: "signin successfull",
             token: token
         })
         return;
     }
+    
     return res.status(411).json({               
         message: "Error while logging in"
     })
