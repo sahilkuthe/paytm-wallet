@@ -8,9 +8,9 @@ const {authMiddleware} = require("../middleware")
 const router = express.Router();
 
 const signupBody = zod.object({             //defining a schema for input validation using zod
-    username: zod.string().email(),
     firstName: zod.string(),
     lastName: zod.string(),
+    username: zod.string().email(),
     password: zod.string()
 })
 
@@ -34,9 +34,9 @@ router.post("/signup", async (req, res) => {
     }
 
     const user = await User.create({            //if all checks are passed then create the user using the information obtained from the post request
-        username: req.body.username,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
+        username: req.body.username,
         password: req.body.password
     })
 
@@ -137,7 +137,7 @@ router.get("/bulk", async (req, res) => {
     })
 
     res.json({
-        user: users.map(user => ({
+        user: (await users).map(user => ({
             username: user.username,
             firstName: user.firstName,
             lastName: user.lastName,
