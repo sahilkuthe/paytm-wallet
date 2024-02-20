@@ -38,7 +38,7 @@ router.post("/transfer", authMiddleware, async (req, res) => {
         })
     }
     
-    const toAccount = await Account.findONe({       //to check the validity of account
+    const toAccount = await Account.findOne({       //to check the validity of account
         userId: to
     }).session(session);
 

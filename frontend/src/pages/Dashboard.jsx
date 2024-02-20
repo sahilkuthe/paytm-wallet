@@ -5,11 +5,11 @@ import axios from "axios";
 
 
 export const Dashboard = () => {
-    const balance = axios.get("http://localhost:3000/api/v1/account/balance").then()
+    // const balance = axios.get("http://localhost:3000/api/v1/account/balance").then()
     return <div>
         <AppBar />
         <div className="m-8">
-            <BalanceComp balance={balance} />
+            <BalanceComp />
             <Users />
         </div>
 

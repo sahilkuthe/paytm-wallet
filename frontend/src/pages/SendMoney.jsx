@@ -1,10 +1,12 @@
 import axios from "axios";
+import { useState } from "react";
 import { useAsyncError, useSearchParams } from "react-router-dom";
 
 export const SendMoney = () => {
     const [searchParams] = useSearchParams();           //used to get whatever we want from the search params (url)
     const id = searchParams.get("id");
     const name = searchParams.get("name");
+    const [amount, setAmount] = useState(0);
 
 
 
@@ -31,7 +33,10 @@ export const SendMoney = () => {
                     >
                         Amount (in Rs)
                     </label>
-                    <input
+                            <input onChange={(e) => {
+                                setAmount(e.target.value)
+                    }}
+                    
                         type="number"
                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                         id="amount"
@@ -39,10 +44,15 @@ export const SendMoney = () => {
                     />
                     </div>
                         <button onClick={() => {
-                            axios.post("http//localhost:3000/api/v1/account/transfer"), {
+                            axios.post("http://localhost:3000/api/v1/account/transfer", {
                                 to: id,
                                 amount
-                            }
+                            }, {
+                                headers: {
+                                    Authorization: "Bearer " + localStorage.getItem("token")
+                                }
+                            });
+                            console.log("transfer succesfull")
                         }} className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white">
                         Initiate Transfer
                     </button>
